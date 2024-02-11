@@ -1,6 +1,6 @@
 package View;
 
-import Controller.Controller;
+import Controller.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +30,7 @@ public class GraphicalUserInterface extends JFrame implements ActionListener {
 
         JPanel panel = new JPanel(new GridLayout(3, 1));
 
-        JLabel originLabel = new JLabel("Model.City of Origin:");
+        JLabel originLabel = new JLabel("City of Origin:");
         panel.add(originLabel);
 
         originComboBox = new JComboBox<>();
@@ -44,7 +44,7 @@ public class GraphicalUserInterface extends JFrame implements ActionListener {
         originComboBox.addItem("Santa Marta");
         panel.add(originComboBox);
 
-        JLabel destinationLabel = new JLabel("Model.City of Destination:");
+        JLabel destinationLabel = new JLabel("City of Destination:");
         panel.add(destinationLabel);
 
         destinationComboBox = new JComboBox<>();
