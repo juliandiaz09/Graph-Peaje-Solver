@@ -4,18 +4,16 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Controller {
     // Crear grafo ponderado
     Graph<City, DefaultWeightedEdge> grafo = new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class);
+    List<City> cities = new ArrayList<>();
 
     // Agregar ciudades
     City medellin = new City("Medellin");
-    City bogota = new City("Bogotá");
+    City bogota = new City("Bogota");
     City cali = new City("Cali");
     City barranquilla = new City("Barranquilla");
     City manizales = new City("Manizales");
@@ -35,6 +33,16 @@ public class Controller {
         grafo.addVertex(cartagena);
         grafo.addVertex(bucaramanga);
         grafo.addVertex(santaMarta);
+
+        addCities(medellin);
+        addCities(bogota);
+        addCities(cali);
+        addCities(barranquilla);
+        addCities(manizales);
+        addCities(pereira);
+        addCities(cartagena);
+        addCities(santaMarta);
+        addCities(bucaramanga);
 
         // Definir peajes y rutas alternativas
         Map<String, List<Peaje>> peajesPorCarretera = new HashMap<>();
@@ -78,22 +86,38 @@ public class Controller {
         addPeajes(grafo, medellin, manizales, null);
         addPeajes(grafo, medellin, pereira, null);
         addPeajes(grafo, manizales, bogota, null);
-        addPeajes(grafo, bogota, cali, null);
-        addPeajes(grafo, cali, barranquilla, null);
+
+    }
+
+    private void addCities(City city) {
+        cities.add(city);
     }
 
 
-    public void rutaMenosCostosa(){
-        // Calcular la ruta más corta utilizando Dijkstra
+    public String routeLessCostly(String city1, String city2){
+        City cityOrigin = findCity(city1);
+        City cityDestination = findCity(city2);
+        String aux = "";
+
         DijkstraShortestPath<City, DefaultWeightedEdge> dijkstra = new DijkstraShortestPath<>(grafo);
-        GraphPath<City, DefaultWeightedEdge> shortestPath = dijkstra.getPath(medellin, santaMarta);
-        
+        GraphPath<City, DefaultWeightedEdge> shortestPath = dijkstra.getPath(cityOrigin, cityDestination);
 
-        // Imprimir la ruta más corta
-        System.out.println("Ruta mas corta: " + shortestPath.getVertexList());
-        System.out.println("Costo total: " + shortestPath.getWeight());
+        for (City city :shortestPath.getVertexList()) {
+            aux += "->  "+  city.getName()+" \n";
+        }
+
+
+        return "Ruta: " + "\n" +  aux + "Total Coste -->  " + shortestPath.getWeight() ;
     }
 
+    private City findCity(String city) {
+        for (City cityAux : cities) {
+            if(cityAux.getName().equals(city)){
+                return cityAux;
+            }
+        }
+        return null;
+    }
 
 
     private void addPeajes(Graph<City, DefaultWeightedEdge> graph, City cityOrigin, City cityDestination , List<Peaje> peajes) {
@@ -107,6 +131,9 @@ public class Controller {
 
         DefaultWeightedEdge peajeEdge = graph.addEdge(cityOrigin, cityDestination);
         graph.setEdgeWeight(peajeEdge, priceTotal);
+
+        DefaultWeightedEdge peajeEdgeReverse = graph.addEdge(cityDestination, cityOrigin);
+        graph.setEdgeWeight(peajeEdgeReverse, priceTotal);
     }
 
 
