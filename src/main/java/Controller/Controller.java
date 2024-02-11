@@ -1,3 +1,7 @@
+package Controller;
+
+import Model.City;
+import Model.Peaje;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
@@ -7,11 +11,11 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import java.util.*;
 
 public class Controller {
-    // Crear grafo ponderado
+    /** Weighted graph representing the cities and roads. */
     Graph<City, DefaultWeightedEdge> grafo = new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class);
+    /** List of cities in the graph. */
     List<City> cities = new ArrayList<>();
-
-    // Agregar ciudades
+    /** Initialises the cities that will be in the graph.*/
     City medellin = new City("Medellin");
     City bogota = new City("Bogota");
     City cali = new City("Cali");
@@ -23,6 +27,7 @@ public class Controller {
     City santaMarta = new City("Santa Marta");
 
 
+    /** Constructor for the Controller.Controller class. Initializes the graph and adds cities. */
     public Controller() {
         grafo.addVertex(medellin);
         grafo.addVertex(bogota);
@@ -44,7 +49,6 @@ public class Controller {
         addCities(santaMarta);
         addCities(bucaramanga);
 
-        // Definir peajes y rutas alternativas
         Map<String, List<Peaje>> peajesPorCarretera = new HashMap<>();
         peajesPorCarretera.put("Medellin-Bogotá", Arrays.asList(
                 new Peaje("Peaje1", 5000.0),
@@ -74,7 +78,6 @@ public class Controller {
         ));
 
 
-        //Agregar aristas (carreteras) con peajes
         addPeajes(grafo, medellin, bogota, peajesPorCarretera.get("Medellin-Bogotá"));
         addPeajes(grafo, bogota, cali, peajesPorCarretera.get("Bogotá-Cali"));
         addPeajes(grafo, cali, barranquilla, peajesPorCarretera.get("Cali-Barranquilla"));
@@ -89,11 +92,18 @@ public class Controller {
 
     }
 
+    /** Add a city to the list of cities.
+     * @param city The city to add.
+     */
     private void addCities(City city) {
         cities.add(city);
     }
 
-
+    /** Calculates the least costly route between two cities.
+     * @param city1 The name of the origin city.
+     * @param city2 The name of the destination city.
+     * @return A string representation of the route and its total cost.
+     */
     public String routeLessCostly(String city1, String city2){
         City cityOrigin = findCity(city1);
         City cityDestination = findCity(city2);
@@ -110,6 +120,10 @@ public class Controller {
         return "Ruta: " + "\n" +  aux + "Total Coste -->  " + shortestPath.getWeight() ;
     }
 
+    /** Finds a city by its name.
+     * @param city The name of the city to find.
+     * @return The city object if found, null otherwise.
+     */
     private City findCity(String city) {
         for (City cityAux : cities) {
             if(cityAux.getName().equals(city)){
@@ -120,6 +134,12 @@ public class Controller {
     }
 
 
+    /** Add tolls to the graph edges between two cities.
+     * @param graph The graph to add edges to.
+     * @param cityOrigin The origin city.
+     * @param cityDestination The destination city.
+     * @param peajes The list of tolls between the two cities.
+     */
     private void addPeajes(Graph<City, DefaultWeightedEdge> graph, City cityOrigin, City cityDestination , List<Peaje> peajes) {
         double priceTotal = 0;
 
